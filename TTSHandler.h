@@ -1,32 +1,28 @@
 #define NO_AUDIO_EXAMPLES
 #include "SimpleTTS.h"
 #include "AudioCodecs/CodecMP3Helix.h"
-#include "AudioDictionary.h"
 #include "AudioDictionaryURL.h"
+#include "AudioTools.h"
 
-simple_tts::AudioDictionaryEntry MyAudioDictionaryValues[] = {
-    {"BPM",new MemoryStream(BPM_mp3,BPM_mp3_len)},
-    {"FREQUENCY",new MemoryStream(Frequency_full_mp3,Frequency_full_mp3_len)},
-    /*{"LISTEN",new MemoryStream(Listen_mp3,Listen_mp3_len)},
-    {"SAMPLE",new MemoryStream(Sample_mp3,Sample_mp3_len)},
-    {"SENDING",new MemoryStream(Sending_mp3,Sending_mp3_len)},
-    {"SEQUENCE",new MemoryStream(Sequence_mp3,Sequence_mp3_len)},*/
-    {nullptr, nullptr}
-};
+const char *url = "https://philippteepunkt.github.io/sequence-me/tts_audio/";
 
 AnalogAudioStream speechOut;
-URLStream in(net); 
+VolumeStream speechVolume(speechOut);
+URLStream in("Hivenet","38459950178051317424");
+//URLStream in();
 AudioDictionaryURL dictionary(in, url, "mp3");
 MP3DecoderHelix mp3;
 TextToSpeechQueue tts(speechVolume, mp3, dictionary);
 
-void initializeSpeechHandler() {
+void initializeSpeechHandler(Client &net) {
   // setup out
   auto cfg = speechOut.defaultConfig();
   cfg.sample_rate = 44100;
   cfg.channels = 1;
   cfg.bits_per_sample = 32;
   speechOut.begin(cfg);
+
+  //in.setClient(net);
 
   // setting the volume
   speechVolume.setVolume(10.0);
@@ -37,7 +33,7 @@ void say(String instruction){
     if(instruction == "BPM"){
      tts.say("BPM"); 
     } else if(instruction == "FREQUENCY"){
-     tts.say("FREQUENCY");       
+     tts.say("frequency");       
     } else if(instruction == "LISTEN"){
      tts.say("LISTEN");
     } else if(instruction == "SAMPLE"){
@@ -49,6 +45,5 @@ void say(String instruction){
     } else {
       return;
     }
-    //delay(2000);
   }
 }
