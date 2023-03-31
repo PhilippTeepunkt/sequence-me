@@ -6,10 +6,12 @@
 
 const char *url = "https://philippteepunkt.github.io/sequence-me/tts_audio/";
 
+using namespace audio_tools;
+
 AnalogAudioStream speechOut;
 VolumeStream speechVolume(speechOut);
-URLStream in("Hivenet","38459950178051317424");
-//URLStream in();
+URLStream in("Hivenet","38459950178051317424"); // doubled because the URLStream::setClient() interface doesn't work
+//URLStream in;
 AudioDictionaryURL dictionary(in, url, "mp3");
 MP3DecoderHelix mp3;
 TextToSpeechQueue tts(speechVolume, mp3, dictionary);
@@ -21,28 +23,38 @@ void initializeSpeechHandler(Client &net) {
   cfg.channels = 1;
   cfg.bits_per_sample = 32;
   speechOut.begin(cfg);
-
-  //in.setClient(net);
-
+  
   // setting the volume
-  speechVolume.setVolume(10.0);
+  speechVolume.setVolume(0.0);
+  speechOut.writeSilence(speechOut.available());
 }
 
 void say(String instruction){
   if (tts.isEmpty()) {
-    if(instruction == "BPM"){
-     tts.say("BPM"); 
+    speechVolume.setVolume(10.0);
+    if(instruction == "INITIALIZED"){
+     //tts.say("initialized");   
+     tts.processWord("initialized");   
+    } else if(instruction == "BPM"){
+     tts.processWord("bpm");
+     //tts.say("bpm"); 
     } else if(instruction == "FREQUENCY"){
-     tts.say("frequency");       
+     tts.processWord("frequency");
+     //tts.say("frequency");       
     } else if(instruction == "LISTEN"){
-     tts.say("LISTEN");
+     tts.processWord("listen");
+     //tts.say("LISTEN");
     } else if(instruction == "SAMPLE"){
-     tts.say("SAMPLE");
+     tts.processWord("sample");
+     //tts.say("SAMPLE");
     } else if(instruction == "SENDING"){
-     tts.say("SENDING");
+     //tts.say("SENDING");
+     tts.processWord("sending");
     } else if(instruction == "SEQUENCE"){
-     tts.say("SEQUENCE");
+     //tts.say("SEQUENCE");
+     tts.processWord("sequence");
     } else {
+      Serial.println("Unknown instruction: "+instruction);
       return;
     }
   }
