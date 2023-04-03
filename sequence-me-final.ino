@@ -31,18 +31,18 @@ StreamCopy copierOut(volume, sound);
 GameSession gs(SEQUENCE_LEN);
 
 // wifi
-const char* ssid = "ssid";
-const char* pw = "password"; 
+const char* ssid = "Hivenet";
+const char* pw = "38459950178051317424"; 
 WiFiClient net;
 const char* wifiHostname = "Player1_Input";
 
 // wireguard vpn
 static WireGuard wg;
-IPAddress local_ip(0,0,0,0);
-const char* private_key = "privatekey";
-//const char* local_public_key = "...";
-const char* endpoint_public_key = "publickey";
-const char* endpoint_address = "vpn domain";
+IPAddress local_ip(198,18,7,8);
+const char* private_key = "INYQ6PytSEe4LZ3kM/n0YnXiE6SMHB8XytthDxcVJH4=";
+//const char* local_public_key = "eyzJzvs0yls/IutPYAjWRA6eYQ0dbuPh8/ybUOww3Vs=";
+const char* endpoint_public_key = "1vj5L1QZaur9C5GLY+c53MVy4ed9qg/G6E5LO+DmYCs=";
+const char* endpoint_address = "vpn.hive-net.de";
 const int endpoint_port = 49999;
 
 // MQTT
@@ -383,6 +383,8 @@ void loop() {
        lastState = gs.getState();
        gs.setState(LISTEN);
        counter = 0;
+       timer_duration = 1.0/gs.bpm * 15 * 1000000;
+       timerAlarmWrite(sequencer, timer_duration , true);
        timerAlarmEnable(sequencer); 
     }    
   }
